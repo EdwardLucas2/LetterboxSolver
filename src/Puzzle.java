@@ -1,7 +1,10 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Puzzle {
     char[][] box; //First index indicates the side 0 = bottom, 1 left, 2 top, 3 right
@@ -10,28 +13,47 @@ public class Puzzle {
     int currentLetterSide = -1, currentLetterIndex = -1;
     ArrayList<Character> remainingLetters;
 
-    public Puzzle() {
+    public Puzzle(String puzzleInputFile) {
         //Initialise the array and random
         this.box = new char[4][3];
         ran = new Random();
 
-        //Add the letters
-        //TODO improve generation (Q-U on different sides (if Q present), vowels, etc.
-        for(int side = 0; side < 4; side++) {
-            for(int i = 0; i < 3; i++) {
-                //No repeating letters
-                while(true) {
-                    char newLetter = (char)(ran.nextInt(26) + 'a');
-                    if(!this.ContainsLetter(newLetter)) {
-                        this.box[side][i] = newLetter;
-                        break;
+        if(puzzleInputFile == null) {
+            //No puzzle file, randomly generate
+            //Add the letters
+            //TODO improve generation (Q-U on different sides (if Q present), vowels, etc.
+            for (int side = 0; side < 4; side++) {
+                for (int i = 0; i < 3; i++) {
+                    //No repeating letters
+                    while (true) {
+                        char newLetter = (char) (ran.nextInt(26) + 'a');
+                        if (!this.ContainsLetter(newLetter)) {
+                            this.box[side][i] = newLetter;
+                            break;
+                        }
                     }
                 }
+            }
+        } else {
+            try {
+                //Open puzzle file
+                File puzzF = new File(puzzleInputFile);
+                Scanner puzzReader = new Scanner(puzzF);
+                //Reads the file with the letters, top, left, right, bottom (letters left to right, bottom to top)
+                for(int side = 0; side < 4; side++) {
+                    String sideStr = puzzReader.nextLine();
+                    for(int c = 0; c < 3; c++) {
+                        this.box[side][c] = sideStr.charAt(c);
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
         }
 
         remainingLetters = GetLetterList();
     }
+
 
     public Puzzle(Puzzle puzzle) {
         this.box = puzzle.box;
