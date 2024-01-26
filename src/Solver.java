@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Solver {
@@ -10,14 +11,14 @@ public class Solver {
     }
 
     public void Preprocess() {
-        wordList.PruneWords(puzzle.GetLetterList());
+        wordList.PruneWords(puzzle.GetLetterList(), puzzle.box);
         wordList.GenerateStartingLetterHash();
     }
 
     //Heuristics for word choices
     //Returns a float between 0.0-1.0
     public float CalculateWordValue(String word) {
-        //Core features of heuristic
+        //Core features of the heuristic:
         //Number of new letters in word
         //Difficulty of new letter in word
         //Easiness of the last letter in the word (the easier the better)
@@ -50,15 +51,61 @@ public class Solver {
         numNewLetters = (numNewLetters - 0)/(8 - 0);
 
         //Normalise total letter difficulty using min-max normalisation
-        //Max letter difficulty - the 8 most difficult letters (summed/100) = 0.608876
-        //Min letter difficulty - the 8 easiest letters (summed/100) = 0.0545475
-        totalLetterDifficulty = (totalLetterDifficulty-0.0545475f)/(0.608876f-0.0545475f);
+        //The minimum value this can take will be with the easiest letters
+        //Most frequent letter sum: 0.608876
+        //Minimum value: 1.0-sum = 0.391124
+
+        //The maximum value this can take is with the most difficult values
+        //Least frequent value sum: 0.0545475
+        //Max value: 1.0-sum = 0.945452
+        totalLetterDifficulty = (totalLetterDifficulty-0.391124f)/(0.945452f-0.391124f);
 
         //Normalise final letter difficulty
         //Max letter difficulty (/100): 0.1116
         //Min letter difficulty (/100): 0.001962
         finalLetterEasiness = (finalLetterEasiness-0.001962f)/(0.1116f-0.001962f);
 
-        //Now we have normalised the values, lets do a weighted average to determine the
+        //Now we have normalised the values, lets do a weighted average to determine the word value
+        float weightedSum = numNewLetters * LetterFrequency.numLetterWeight +
+                totalLetterDifficulty * LetterFrequency.totLetterDiffWeight +
+                finalLetterEasiness * LetterFrequency.endLetterDiffWeight;
+
+        //Return the sum
+        return weightedSum;
+    }
+
+    public void Solve() {
+        for(int step = 0; step < 6; step++) {
+            String nextWord = CalculateNextWord();
+
+        }
+    }
+
+    private String CalculateNextWord() {
+        //Get all the possible words in a list
+        ArrayList<String> possibleWords = new ArrayList<>();
+        //Check if we have a first letter (choosing the first word or not)
+        if(puzzle.currentLetterIndex < 0) {
+            //Choosing the first word
+            possibleWords.addAll(wordList.wordList);
+        } else {
+            //Not choosing the first word
+            possibleWords.addAll(wordList.startingLetterHash.get(puzzle.box[puzzle.currentLetterSide][puzzle.currentLetterIndex]));
+        }
+
+        //Calculate the heuristic value for each possible word, and get the word with the highest value
+        float maxVal = -1000f;
+        int maxValWordIndex = -1;
+
+        for(int i = 0; i < possibleWords.size(); i++) {
+            float val = CalculateWordValue(possibleWords.get(i));
+            if(val > maxVal) {
+                maxVal = val;
+                maxValWordIndex = i;
+            }
+        }
+
+        //Return the word with the highest value
+        return possibleWords.get(maxValWordIndex);
     }
 }

@@ -76,4 +76,12 @@ public class Puzzle {
 
         return res;
     }
+
+    public void PlayWord(String word) {
+
+    }
+
+    public boolean PuzzleComplete() {
+
+    }
 }
