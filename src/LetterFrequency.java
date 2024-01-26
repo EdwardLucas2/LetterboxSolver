@@ -32,5 +32,5 @@ public class LetterFrequency {
         put('q', 0.1962F);
     }};
 
-    public static float numLetterWeight = 0.5f, totLetterDiffWeight = 0.25f, endLetterDiffWeight = 0.25f; //MUST sum to 1.0
+    public static float numLetterWeight = 0.7f, totLetterDiffWeight = 0.0f, endLetterDiffWeight = 0.3f; //MUST sum to 1.0
 }

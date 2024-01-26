@@ -25,7 +25,7 @@ public class Solver {
             }
         }
 
-        int numNewLetters = newLetters.size();
+        float numNewLetters = newLetters.size();
 
         //Total difficulty of new letters - we want the highest number of infrequent (most difficult) letters (ignoring the last letter)
         float totalLetterDifficulty = 0;
@@ -40,7 +40,7 @@ public class Solver {
 
         //Normalise the values
         //Normalise newLetters by using min-max normalisation
-        numNewLetters = (numNewLetters - 0)/(8 - 0);
+        numNewLetters = (numNewLetters - 0f)/(8f - 0f);
 
         //Normalise total letter difficulty using min-max normalisation
         //The minimum value this can take will be with the easiest letters
@@ -56,6 +56,10 @@ public class Solver {
         //Max letter difficulty (/100): 0.1116
         //Min letter difficulty (/100): 0.001962
         finalLetterEasiness = (finalLetterEasiness-0.001962f)/(0.1116f-0.001962f);
+
+        numNewLetters = Math.max(0, Math.min(numNewLetters, 1.0f));
+        totalLetterDifficulty = Math.max(0, Math.min(totalLetterDifficulty, 1.0f));
+        finalLetterEasiness = Math.max(0, Math.min(finalLetterEasiness, 1.0f));
 
         //Now we have normalised the values, lets do a weighted average to determine the word value
         float weightedSum = numNewLetters * LetterFrequency.numLetterWeight +
