@@ -4,7 +4,13 @@ public class Main {
         WordList wordList = new WordList("./src/google-10000-english.txt");
 
         //Generate puzzle
-        Puzzle puzzle = new Puzzle("./src/PuzzleInput.puz");
+        Puzzle puzzle;
+        if(args.length > 0) {
+            puzzle = new Puzzle(args[0]);
+        } else {
+            puzzle= new Puzzle((String) null);
+        }
+
         System.out.println(puzzle.toString());
 
         //Generate solver
