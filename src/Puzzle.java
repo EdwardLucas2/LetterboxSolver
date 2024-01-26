@@ -33,6 +33,14 @@ public class Puzzle {
         remainingLetters = GetLetterList();
     }
 
+    public Puzzle(Puzzle puzzle) {
+        this.box = puzzle.box;
+        this.currentLetterIndex = puzzle.currentLetterIndex;
+        this.currentLetterSide = puzzle.currentLetterSide;
+        this.remainingLetters = new ArrayList<>(puzzle.remainingLetters);
+        this.ran = new Random();
+    }
+
     public String toString() {
         String str = " |";
 
@@ -77,11 +85,37 @@ public class Puzzle {
         return res;
     }
 
-    public void PlayWord(String word) {
+    //returns -1 if the letter isn't present, the side num else
+    public int GetLetterSide(char letter) {
+        for(int side = 0; side < 4; side++) {
+            for(int i = 0; i < 3; i++) {
+                if(this.box[side][i] == letter) {
+                    return side;
+                }
+            }
+        }
 
+        return -1;
+    }
+
+    public void PlayWord(String word) {
+        //remove the letter s in the word from the remaining letters list
+        for(Character c : word.toCharArray()) {
+            remainingLetters.remove(c);
+        }
+
+        //Update the current letter index
+        currentLetterSide = GetLetterSide(word.charAt(word.length()-1));
+
+        for(int i = 0; i < 3; i++) {
+            if(box[currentLetterSide][i] == word.charAt(word.length()-1)) {
+                currentLetterIndex = i;
+                break;
+            }
+        }
     }
 
     public boolean PuzzleComplete() {
-
+        return remainingLetters.isEmpty();
     }
 }

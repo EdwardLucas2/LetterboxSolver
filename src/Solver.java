@@ -2,22 +2,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Solver {
-    private WordList wordList;
-    private Puzzle puzzle;
-
-    public Solver(WordList wordList, Puzzle puzzle) {
-        this.wordList = wordList;
-        this.puzzle = puzzle;
-    }
-
-    public void Preprocess() {
-        wordList.PruneWords(puzzle.GetLetterList(), puzzle.box);
+    public void Preprocess(WordList wordList, Puzzle puzzle) {
+        wordList.PruneWords(puzzle.GetLetterList(), puzzle);
         wordList.GenerateStartingLetterHash();
     }
 
     //Heuristics for word choices
     //Returns a float between 0.0-1.0
-    public float CalculateWordValue(String word) {
+    public float CalculateWordValue(String word, Puzzle puzzle) {
         //Core features of the heuristic:
         //Number of new letters in word
         //Difficulty of new letter in word
@@ -74,14 +66,65 @@ public class Solver {
         return weightedSum;
     }
 
-    public void Solve() {
-        for(int step = 0; step < 6; step++) {
-            String nextWord = CalculateNextWord();
+    public boolean Solve(WordList wordList, Puzzle puzzle, int stepNum, int maxSteps) {
+        //Check num of steps
+        if(stepNum > maxSteps)
+            return false;
 
+        WordList newWordList = new WordList(wordList);
+        Puzzle newPuzzle = new Puzzle(puzzle);
+
+        //Calculate the best next word
+        String nextWord = CalculateNextWord(newWordList, newPuzzle);
+        //Check if there is a possible word
+        if(nextWord == null) {
+            //there isn't
+            return false;
+        }
+
+        //There is a next word, play it
+        newPuzzle.PlayWord(nextWord);
+        newWordList.RemoveWord(nextWord);
+        System.out.println("Playing word: " + nextWord);
+        System.out.println("Remaining letters: " + puzzle.remainingLetters);
+
+        //Check if the puzzle is complete
+        if(newPuzzle.PuzzleComplete()) {
+            System.out.println("<<<<Completed Puzzle!>>>>");
+            return true;
+        }
+
+        //Puzzle incomplete, recurse
+        if(Solve(newWordList, newPuzzle, stepNum+1, maxSteps)) {
+            //Found a solution
+            return true;
+        } else {
+            //No solution in this path, choose a different word in this step
+            System.out.println("No solution in this step, choosing a different word");
+            String differentWord = CalculateNextWord(newWordList, puzzle);
+            //Check for null
+            if(differentWord == null) {
+                System.out.println("Couldn't find a different word, no solution in this branch");
+                return false;
+            }
+
+            //Play the word
+            puzzle.PlayWord(differentWord);
+            wordList.RemoveWord(differentWord);
+
+            //Check if the puzzle is complete
+            if(newPuzzle.PuzzleComplete()) {
+                System.out.println("<<<<Completed Puzzle!>>>>");
+                return true;
+            }
+
+            //Recurse
+            return Solve(wordList, puzzle, stepNum+1, maxSteps);
         }
     }
 
-    private String CalculateNextWord() {
+    //Returns null if no word found
+    private String CalculateNextWord(WordList wordList, Puzzle puzzle) {
         //Get all the possible words in a list
         ArrayList<String> possibleWords = new ArrayList<>();
         //Check if we have a first letter (choosing the first word or not)
@@ -98,7 +141,7 @@ public class Solver {
         int maxValWordIndex = -1;
 
         for(int i = 0; i < possibleWords.size(); i++) {
-            float val = CalculateWordValue(possibleWords.get(i));
+            float val = CalculateWordValue(possibleWords.get(i), puzzle);
             if(val > maxVal) {
                 maxVal = val;
                 maxValWordIndex = i;
@@ -106,6 +149,11 @@ public class Solver {
         }
 
         //Return the word with the highest value
-        return possibleWords.get(maxValWordIndex);
+        if(maxValWordIndex < 0) {
+            //No word
+            return null;
+        } else {
+            return possibleWords.get(maxValWordIndex);
+        }
     }
 }

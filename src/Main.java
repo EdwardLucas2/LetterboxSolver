@@ -8,13 +8,16 @@ public class Main {
         System.out.println(puzzle.toString());
 
         //Generate solver
-        Solver solver = new Solver(wordList, puzzle);
+        Solver solver = new Solver();
 
         //Preprocessing
-        solver.Preprocess();
+        solver.Preprocess(wordList, puzzle);
 
         //Print word list after preprocessing
         System.out.println("Finished preprocessing, word list: " + wordList.wordList);
         System.out.println(wordList.startingLetterHash);
+
+        //Solve the puzzle
+        solver.Solve(wordList, puzzle, 0, 6);
     }
 }

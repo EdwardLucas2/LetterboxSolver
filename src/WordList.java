@@ -27,7 +27,11 @@ public class WordList {
         wordList.removeIf(s -> s.length() < 4);
     }
 
-    public void PruneWords(ArrayList<Character> letterList, char[][]box) {
+    public WordList(WordList wordList) {
+        this.wordList = new ArrayList<>(wordList.wordList);
+        this.startingLetterHash = new HashMap<>(wordList.startingLetterHash);
+    }
+    public void PruneWords(ArrayList<Character> letterList, Puzzle puzzle) {
         System.out.println("Pruning words, letter list: " + letterList);
         //Iterate over every word in the word list
         ListIterator<String> iter = wordList.listIterator();
@@ -39,7 +43,7 @@ public class WordList {
                 iter.remove();
             } else {
                 //Box contains all the letters for the word, check if the word can be constructed
-                if(!CanConstructWord(word, box)) {
+                if(!CanConstructWord(word, puzzle)) {
                     //Can;t construct the word
                     iter.remove();
                 }
@@ -57,12 +61,12 @@ public class WordList {
         return true;
     }
     //Assumes all letters for the word are present
-    private boolean CanConstructWord(String word, char[][] box) {
+    private boolean CanConstructWord(String word, Puzzle puzzle) {
         int lastLetterSide = -1;
         //iterate over every letter i n the word
         for(int i = 0; i < word.length(); i++) {
             //Get the side of the letter
-            int letterSide = GetLetterSide(word.charAt(i), box);
+            int letterSide = puzzle.GetLetterSide(word.charAt(i));
             // and compare it to the last letter side
             if(letterSide == lastLetterSide) {
                 //Same side as last letter
@@ -75,18 +79,6 @@ public class WordList {
 
         return true;
     }
-    //returns -1 if the letter isn't present, the side num else
-    private int GetLetterSide(char letter, char[][] box) {
-        for(int side = 0; side < 4; side++) {
-            for(int i = 0; i < 3; i++) {
-                if(box[side][i] == letter) {
-                    return side;
-                }
-            }
-        }
-
-        return -1;
-    }
 
     public void GenerateStartingLetterHash() {
         //Initialise hashmap
@@ -98,5 +90,10 @@ public class WordList {
         for(String word: wordList) {
             startingLetterHash.get(word.charAt(0)).add(word);
         }
+    }
+
+    public void RemoveWord(String word) {
+        wordList.remove(word);
+        startingLetterHash.get(word.charAt(0)).remove(word);
     }
 }
