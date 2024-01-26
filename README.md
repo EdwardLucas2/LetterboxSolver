@@ -1,4 +1,4 @@
-This program solves the letterbox puzzle in The New York Times.
+This program solves the Letter Boxed puzzle in The New York Times: https://www.nytimes.com/puzzles/letter-boxed.
 
 **Basic Operation:** \
 The main function takes an optional argument which, if not null, contains the path to the puzzle to be solved.
