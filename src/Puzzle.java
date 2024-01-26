@@ -7,6 +7,8 @@ public class Puzzle {
     char[][] box; //First index indicates the side 0 = bottom, 1 left, 2 top, 3 right
                         //Second index indicates the letter on the side (going left to right, bottom to top)
     Random ran;
+    int currentLetterSide = -1, currentLetterIndex = -1;
+    ArrayList<Character> remainingLetters;
 
     public Puzzle() {
         //Initialise the array and random
@@ -27,6 +29,8 @@ public class Puzzle {
                 }
             }
         }
+
+        remainingLetters = GetLetterList();
     }
 
     public String toString() {
@@ -64,7 +68,7 @@ public class Puzzle {
 
     public ArrayList<Character> GetLetterList() {
         ArrayList<Character> res = new ArrayList<>();
-        for(char[] charArr :Arrays.asList(box)) {
+        for(char[] charArr : this.box) {
             for(Character c : charArr) {
                 res.add(c);
             }
