@@ -40,6 +40,8 @@ Each is a normalised float from 0.0-1.0.
 - Better/new heuristics and weightings
 - Better normalisation for heuristic values
 - Better random puzzle generation - currently impossible puzzles can be generated (i.e. no vowels, a Q without a U, etc.)
+- New word list - there are words in the current data set that are proper nouns etc. that aren't accepted in the solver
+- More solutions - calculate and display multiple different solutions
 
 ##### References:
 Letter frequency: \
