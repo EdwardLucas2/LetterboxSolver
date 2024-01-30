@@ -95,6 +95,7 @@ public class Solver {
         //Check if the puzzle is complete
         if(newPuzzle.PuzzleComplete()) {
             System.out.println("<<<<Completed Puzzle!>>>>");
+            System.out.println(newPuzzle.toString());
             return true;
         }
 
@@ -119,6 +120,7 @@ public class Solver {
             //Check if the puzzle is complete
             if(newPuzzle.PuzzleComplete()) {
                 System.out.println("<<<<Completed Puzzle!>>>>");
+                System.out.println(newPuzzle.toString());
                 return true;
             }
 

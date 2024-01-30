@@ -12,11 +12,13 @@ public class Puzzle {
     Random ran;
     int currentLetterSide = -1, currentLetterIndex = -1;
     ArrayList<Character> remainingLetters;
+    ArrayList<String> playedWords;
 
     public Puzzle(String puzzleInputFile) {
         //Initialise the array and random
         this.box = new char[4][3];
         ran = new Random();
+        this.playedWords = new ArrayList<>();
 
         if(puzzleInputFile == null) {
             //No puzzle file, randomly generate
@@ -61,6 +63,7 @@ public class Puzzle {
         this.currentLetterSide = puzzle.currentLetterSide;
         this.remainingLetters = new ArrayList<>(puzzle.remainingLetters);
         this.ran = new Random();
+        this.playedWords = new ArrayList<>(puzzle.playedWords);
     }
 
     public String toString() {
@@ -81,6 +84,9 @@ public class Puzzle {
         for(int i = 0; i < 3; i++) {
             str += this.box[0][i] + "|";
         }
+
+        str += "\nRemaining Letters: " + remainingLetters.toString() + "\n";
+        str += "Played words: " + playedWords.toString() + "\n";
 
         return str;
     }
@@ -128,6 +134,9 @@ public class Puzzle {
 
         //Update the current letter index
         currentLetterSide = GetLetterSide(word.charAt(word.length()-1));
+
+        //Add word to list
+        playedWords.add(word);
 
         for(int i = 0; i < 3; i++) {
             if(box[currentLetterSide][i] == word.charAt(word.length()-1)) {

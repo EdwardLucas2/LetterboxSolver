@@ -35,7 +35,7 @@ Each is a normalised float from 0.0-1.0.
 3) The easiness of the last letter in the word (it's frequency)
 
 #### TODO:
-- Better solution reporting, maybe implemented by storing the played words in the puzzle class
+- Better solution reporting, maybe implemented by storing the played words in the puzzle class (DONE)
 - Changing the solver from a recursive implementation to an iterative one
 - Better/new heuristics and weightings
 - Better normalisation for heuristic values
